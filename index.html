@@ -181,13 +181,21 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
     <!-- SCAN -->
     <div class="page active" id="page-scan">
       <div class="card" id="upload-card">
-        <div class="upload-zone" onclick="document.getElementById('file-inp').click()">
-          <input type="file" id="file-inp" accept="image/*" capture="environment" style="display:none" onchange="onFile(event)">
-          <div class="uz-icon">📷</div>
-          <h3>拍照识别餐食</h3>
-          <p>AI 自动识别食物 · 计算热量</p>
-        </div>
-      </div>
+        <input type="file" id="file-inp-camera" accept="image/*" capture="environment" style="display:none" onchange="onFile(event)">
+        <input type="file" id="file-inp-gallery" accept="image/*" style="display:none" onchange="onFile(event)">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="upload-zone" onclick="document.getElementById('file-inp-camera').click()">
+           <div class="uz-icon">📷</div>
+           <h3>拍照识别</h3>
+           <p>打开相机拍摄餐食</p>
+          </div>
+          <div class="upload-zone" onclick="document.getElementById('file-inp-gallery').click()">
+           <div class="uz-icon">🖼️</div>
+           <h3>从相册选择</h3>
+           <p>选择已有的餐食照片</p>
+          </div>
+       </div>
+
       <div class="card hidden" id="analyze-card">
         <img id="preview" class="preview-img" src="" alt="餐食预览">
         <div class="section-label">这是哪一餐？</div>
