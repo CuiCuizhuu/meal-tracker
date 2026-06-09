@@ -524,7 +524,7 @@ async function doAnalyze() {
   const ra = document.getElementById('result-area');
   ra.innerHTML = '<div style="color:var(--muted);font-style:italic;font-size:13px;padding:12px 0">AI 正在识别食物，请稍候...</div>';
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    const resp = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -691,7 +691,7 @@ async function getAdvice() {
   const profileDesc = userProfile ? `用户：${userProfile.name||''}，${userProfile.gender||''}，${userProfile.age||'?'}岁，目标：${userProfile.goal||'维持'}，偏好：${userProfile.prefer||'无特殊'}，每日目标：${target} kcal。` : `每日目标：${target} kcal。`;
   const mealDesc = `今日摄入 ${tot} kcal（${Math.round(tot/target*100)}%），食物：${allFoods.join('、') || '暂无记录'}`;
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    const resp = await fetch('/api/chat', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514', max_tokens: 800,
