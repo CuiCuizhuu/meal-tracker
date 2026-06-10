@@ -536,6 +536,11 @@ async function doAnalyze() {
       })
     });
     const d = await resp.json();
+    if (d.error) {
+      ra.innerHTML = '<div style="color:var(--danger);font-size:13px;padding:8px 0">错误：' + JSON.stringify(d.error) + '</div>';
+      btn.disabled = false; btn.textContent = '✨ AI 识别食物与热量'; btn.onclick = doAnalyze;
+      return;
+    }
     const raw = d.content?.map(i => i.text || '').join('') || '{}';
     const result = JSON.parse(raw.replace(/```json|```/g, '').trim());
     pendingResult = result;
@@ -544,7 +549,7 @@ async function doAnalyze() {
     btn.textContent = '💾 保存到记录';
     btn.onclick = saveRecord;
   } catch (err) {
-    ra.innerHTML = '<div style="color:var(--danger);font-size:13px;padding:8px 0">识别失败，请重试。</div>';
+    ra.innerHTML = '<div style="color:var(--danger);font-size:13px;padding:8px 0">识别失败：' + err.message + '</div>';
     btn.disabled = false; btn.textContent = '✨ AI 识别食物与热量'; btn.onclick = doAnalyze;
   }
 }
