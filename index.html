@@ -580,10 +580,10 @@ async function saveRecord() {
   const record = {
     user_id: currentUser.id, date: today, meal: selectedMeal, time,
     foods: pendingResult.foods || [],
-    total_kcal: pendingResult.total_kcal || 0,
-    total_protein: pendingResult.total_protein || 0,
-    total_carbs: pendingResult.total_carbs || 0,
-    total_fat: pendingResult.total_fat || 0,
+    total_kcal: Math.round(pendingResult.total_kcal || 0),
+    total_protein: Math.round(pendingResult.total_protein || 0),
+    total_carbs: Math.round(pendingResult.total_carbs || 0),
+    total_fat: Math.round(pendingResult.total_fat || 0),
     advice: pendingResult.advice || ''
   };
   const { error } = await sb.from('meal_records').insert(record);
