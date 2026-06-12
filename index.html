@@ -113,15 +113,15 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
 .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .cal-title { font-size: 14px; font-weight: 600; }
 .cal-nav { background: none; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 4px 10px; cursor: pointer; font-size: 13px; color: var(--text); }
-.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-.cal-day-lbl { font-size: 10px; color: var(--muted); text-align: center; padding: 4px 0; font-weight: 500; }
-.cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; font-size: 12px; color: var(--text); transition: all 0.15s; position: relative; gap: 2px; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.cal-day-lbl { font-size: 10px; color: var(--muted); text-align: center; padding: 3px 0; font-weight: 500; }
+.cal-day { height: 36px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; font-size: 12px; color: var(--text); transition: all 0.15s; position: relative; gap: 1px; }
 .cal-day:hover { background: var(--accent-light); }
 .cal-day.today { background: var(--accent-light); color: var(--accent); font-weight: 700; }
 .cal-day.selected { background: var(--accent); color: #fff; font-weight: 700; }
 .cal-day.empty { cursor: default; }
 .cal-day.empty:hover { background: transparent; }
-.cal-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+.cal-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--accent); }
 .cal-day.selected .cal-dot { background: rgba(255,255,255,0.7); }
 .cal-day.has-data { font-weight: 500; }
 /* MANUAL INPUT */
@@ -143,6 +143,29 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
 .empty { text-align: center; padding: 3rem 1rem; color: var(--muted); }
 .empty .e-icon { font-size: 2.5rem; margin-bottom: 10px; }
 .empty p { font-size: 13px; }
+
+/* DASHBOARD */
+.dash-date-nav { display:flex; align-items:center; justify-content:space-between; padding:0 4px; margin-bottom:12px; }
+.dash-card { background:linear-gradient(135deg,#2D6A4F 0%,#40916C 100%); border-radius:20px; padding:1.5rem 1.25rem 1.25rem; margin-bottom:12px; box-shadow:0 4px 20px rgba(45,106,79,0.25); }
+.dash-ring-wrap { position:relative; width:160px; height:160px; margin:0 auto 1.2rem; }
+.dash-ring { width:100%; height:100%; }
+.dash-ring-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
+.dash-ring-kcal { font-size:2rem; font-weight:700; font-family:'DM Mono',monospace; color:#fff; line-height:1; }
+.dash-ring-label { font-size:11px; color:rgba(255,255,255,0.7); margin-top:3px; }
+.dash-ring-remain { font-size:12px; color:rgba(255,255,255,0.9); margin-top:4px; font-weight:500; }
+.dash-macros { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.dash-macro { text-align:center; }
+.dash-macro-val { font-size:15px; font-weight:700; font-family:'DM Mono',monospace; color:#fff; margin-bottom:4px; }
+.dash-macro-bar-bg { height:4px; background:rgba(255,255,255,0.2); border-radius:2px; overflow:hidden; margin-bottom:4px; }
+.dash-macro-bar { height:4px; border-radius:2px; transition:width 0.5s ease; }
+.dash-macro-lbl { font-size:11px; color:rgba(255,255,255,0.7); }
+.dash-meals-row { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:12px; }
+.dash-meal-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:12px; box-shadow:var(--shadow); }
+.dash-meal-icon { font-size:18px; margin-bottom:4px; }
+.dash-meal-name { font-size:11px; color:var(--muted); font-weight:500; margin-bottom:4px; }
+.dash-meal-kcal { font-size:17px; font-weight:700; font-family:'DM Mono',monospace; color:var(--text); }
+.dash-meal-bar-bg { height:3px; background:var(--bg); border-radius:2px; overflow:hidden; margin-top:6px; }
+.dash-meal-bar { height:3px; border-radius:2px; transition:width 0.5s; }
 </style>
 </head>
 <body>
@@ -269,8 +292,58 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
 
     <!-- SUMMARY PAGE -->
     <div class="page hidden" id="page-summary">
-      <!-- Calendar -->
-      <div class="card">
+      <!-- Date nav -->
+      <div class="dash-date-nav">
+        <button class="cal-nav" onclick="calPrev()">‹</button>
+        <div style="text-align:center">
+          <div style="font-size:13px;font-weight:600;color:var(--text)" id="sum-date-lbl">今天</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:1px" id="sum-date-sub"></div>
+        </div>
+        <button class="cal-nav" onclick="calNext()">›</button>
+      </div>
+
+      <!-- Dashboard card -->
+      <div class="dash-card">
+        <!-- Ring -->
+        <div class="dash-ring-wrap">
+          <svg class="dash-ring" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#E8F5EE" stroke-width="10"/>
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#2D6A4F" stroke-width="10"
+              stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7"
+              id="ring-circle" style="transition:stroke-dashoffset 0.6s ease;transform:rotate(-90deg);transform-origin:center"/>
+          </svg>
+          <div class="dash-ring-center">
+            <div class="dash-ring-kcal" id="sum-kcal">0</div>
+            <div class="dash-ring-label">kcal 已摄入</div>
+            <div class="dash-ring-remain" id="sum-remain">剩余 —</div>
+          </div>
+        </div>
+        <!-- Macros -->
+        <div class="dash-macros">
+          <div class="dash-macro">
+            <div class="dash-macro-val" id="sum-p">0g</div>
+            <div class="dash-macro-bar-bg"><div class="dash-macro-bar" id="bar-p" style="background:#5B9BD5;width:0%"></div></div>
+            <div class="dash-macro-lbl">蛋白质</div>
+          </div>
+          <div class="dash-macro">
+            <div class="dash-macro-val" id="sum-c">0g</div>
+            <div class="dash-macro-bar-bg"><div class="dash-macro-bar" id="bar-c" style="background:#F0A500;width:0%"></div></div>
+            <div class="dash-macro-lbl">碳水</div>
+          </div>
+          <div class="dash-macro">
+            <div class="dash-macro-val" id="sum-f">0g</div>
+            <div class="dash-macro-bar-bg"><div class="dash-macro-bar" id="bar-f" style="background:#E07070;width:0%"></div></div>
+            <div class="dash-macro-lbl">脂肪</div>
+          </div>
+        </div>
+        <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:10px">目标 <span id="sum-target-lbl" style="font-weight:600;color:var(--accent)">2000</span> kcal</div>
+      </div>
+
+      <!-- Meal breakdown -->
+      <div class="dash-meals-row" id="sum-meals"></div>
+
+      <!-- Mini calendar -->
+      <div class="card" style="padding:1rem">
         <div class="cal-wrap">
           <div class="cal-header">
             <button class="cal-nav" onclick="calPrev()">‹</button>
@@ -279,29 +352,9 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
           </div>
           <div class="cal-grid" id="cal-grid"></div>
         </div>
-        <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:6px">点击日期查看当天摄入</div>
       </div>
 
-      <!-- Day summary -->
-      <div class="card">
-        <div class="section-label" id="sum-date-lbl">今日摄入</div>
-        <div class="big-kcal" id="sum-kcal">0 <span>kcal</span></div>
-        <div class="progress-wrap">
-          <div class="progress-bg"><div class="progress-fill" id="sum-bar" style="width:0%;background:var(--accent)"></div></div>
-          <div class="progress-label"><span id="sum-target-lbl">目标 2000 kcal</span><span id="sum-pct-lbl">0%</span></div>
-        </div>
-        <div class="stat-row" style="margin-top:14px">
-          <div class="stat-box"><div class="stat-val" id="sum-p">0g</div><div class="stat-lbl">蛋白质</div></div>
-          <div class="stat-box"><div class="stat-val" id="sum-c">0g</div><div class="stat-lbl">碳水</div></div>
-          <div class="stat-box"><div class="stat-val" id="sum-f">0g</div><div class="stat-lbl">脂肪</div></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="section-label">餐次明细</div>
-        <div id="sum-meals"><div style="font-size:13px;color:var(--muted);padding:1rem 0;text-align:center">暂无记录</div></div>
-      </div>
-
+      <!-- AI advice -->
       <div class="card">
         <div class="section-label">AI 健康建议</div>
         <button class="btn-outline" onclick="getAdvice()" id="advice-btn">✨ 生成专属建议</button>
@@ -859,9 +912,11 @@ async function renderSummary(date) {
   if (!currentUser) return;
   if (!date) date = new Date().toISOString().slice(0,10);
   const today = new Date().toISOString().slice(0,10);
-  const lbl = date === today ? '今天 · ' + new Date().toLocaleDateString('zh-CN', { month:'long', day:'numeric' })
-    : new Date(date+'T12:00:00').toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric', weekday:'short' });
-  document.getElementById('sum-date-lbl').textContent = lbl;
+  const isToday = date === today;
+  const dateObj = new Date(date+'T12:00:00');
+  document.getElementById('sum-date-lbl').textContent = isToday ? '今天' : dateObj.toLocaleDateString('zh-CN',{month:'short',day:'numeric',weekday:'short'});
+  document.getElementById('sum-date-sub').textContent = dateObj.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric'});
+
   const { data } = await sb.from('meal_records').select('*').eq('user_id', currentUser.id).eq('date', date);
   const recs = data || [];
   const tot = recs.reduce((s,r) => s+r.total_kcal, 0);
@@ -870,23 +925,43 @@ async function renderSummary(date) {
   const tf = recs.reduce((s,r) => s+r.total_fat, 0);
   const target = (userProfile && userProfile.tdee) || 2000;
   const pct = Math.min(100, Math.round(tot/target*100));
-  document.getElementById('sum-kcal').innerHTML = tot + ' <span>kcal</span>';
-  const bar = document.getElementById('sum-bar');
-  bar.style.width = pct + '%';
-  bar.style.background = pct > 110 ? '#C0392B' : pct > 90 ? '#E67E22' : '#2D6A4F';
-  document.getElementById('sum-target-lbl').textContent = '目标 ' + target + ' kcal';
-  document.getElementById('sum-pct-lbl').textContent = pct + '%';
-  document.getElementById('sum-p').textContent = tp + 'g';
-  document.getElementById('sum-c').textContent = tc + 'g';
-  document.getElementById('sum-f').textContent = tf + 'g';
-  const meals = { breakfast:0, lunch:0, dinner:0, snack:0 };
+  const remain = target - tot;
+
+  // Ring
+  document.getElementById('sum-kcal').textContent = tot;
+  document.getElementById('sum-remain').textContent = remain >= 0 ? '还剩 '+remain+' kcal' : '超出 '+Math.abs(remain)+' kcal';
+  const circumference = 2 * Math.PI * 52;
+  const offset = circumference * (1 - Math.min(1, pct/100));
+  const ring = document.getElementById('ring-circle');
+  ring.style.strokeDashoffset = offset;
+  ring.style.stroke = pct > 110 ? '#E07070' : pct > 90 ? '#F0A500' : '#fff';
+
+  document.getElementById('sum-target-lbl').textContent = target;
+
+  // Macros
+  document.getElementById('sum-p').textContent = tp+'g';
+  document.getElementById('sum-c').textContent = tc+'g';
+  document.getElementById('sum-f').textContent = tf+'g';
+  const maxMacro = Math.max(tp, tc, tf, 1);
+  document.getElementById('bar-p').style.width = Math.round(tp/maxMacro*100)+'%';
+  document.getElementById('bar-c').style.width = Math.round(tc/maxMacro*100)+'%';
+  document.getElementById('bar-f').style.width = Math.round(tf/maxMacro*100)+'%';
+
+  // Meal cards
+  const mealIcons = {breakfast:'🌅',lunch:'☀️',dinner:'🌙',snack:'🍎'};
+  const mealColors = {breakfast:'#5B9BD5',lunch:'#40916C',dinner:'#9B72CF',snack:'#F0A500'};
+  const meals = {breakfast:0,lunch:0,dinner:0,snack:0};
   recs.forEach(r => { meals[r.meal] = (meals[r.meal]||0) + r.total_kcal; });
-  const mealHtml = Object.entries(meals).filter(([,v]) => v > 0).map(([k,v]) => `
-    <div class="meal-summary-row">
-      <span class="badge ${mealBadge[k]}">${mealLabel[k]}</span>
-      <span style="font-size:14px;font-weight:700;font-family:'DM Mono',monospace">${v} kcal</span>
+  const allMeals = Object.entries(meals);
+  const maxMeal = Math.max(...allMeals.map(([,v])=>v), 1);
+  document.getElementById('sum-meals').innerHTML = allMeals.map(([k,v]) => `
+    <div class="dash-meal-card">
+      <div class="dash-meal-icon">${mealIcons[k]}</div>
+      <div class="dash-meal-name">${mealLabel[k]}</div>
+      <div class="dash-meal-kcal">${v}<span style="font-size:11px;font-weight:400;color:var(--muted);margin-left:2px">kcal</span></div>
+      <div class="dash-meal-bar-bg"><div class="dash-meal-bar" style="width:${Math.round(v/maxMeal*100)}%;background:${mealColors[k]}"></div></div>
     </div>`).join('');
-  document.getElementById('sum-meals').innerHTML = mealHtml || '<div style="font-size:13px;color:var(--muted);padding:1rem 0;text-align:center">当日暂无记录</div>';
+
   document.getElementById('advice-out').innerHTML = '<span class="ai-thinking">点击上方按钮获取基于当日饮食的个性化建议...</span>';
 }
 
