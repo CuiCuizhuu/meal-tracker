@@ -125,10 +125,10 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
 .cal-day.selected .cal-dot { background: rgba(255,255,255,0.7); }
 .cal-day.has-data { font-weight: 500; }
 /* MANUAL INPUT */
-.manual-food-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
-.manual-food-row input { flex: 1; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px; font-size: 13px; background: var(--surface); color: var(--text); font-family: 'Noto Sans SC', sans-serif; outline: none; }
+.manual-food-row { display: flex; gap: 6px; margin-bottom: 6px; align-items: center; }
+.manual-food-row input { flex: 1; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 5px 8px; font-size: 12px; background: var(--surface); color: var(--text); font-family: 'Noto Sans SC', sans-serif; outline: none; }
 .manual-food-row input:focus { border-color: var(--accent); }
-.manual-food-row input.kcal-inp { width: 80px; flex: none; }
+.manual-food-row input.kcal-inp { width: 64px; flex: none; }
 .remove-food-btn { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 18px; padding: 0 4px; line-height: 1; }
 .remove-food-btn:hover { color: var(--danger); }
 /* PROFILE */
@@ -292,14 +292,11 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
 
     <!-- SUMMARY PAGE -->
     <div class="page hidden" id="page-summary">
-      <!-- Date nav -->
-      <div class="dash-date-nav">
-        <button class="cal-nav" onclick="calPrev()">‹</button>
-        <div style="text-align:center">
-          <div style="font-size:13px;font-weight:600;color:var(--text)" id="sum-date-lbl">今天</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:1px" id="sum-date-sub"></div>
-        </div>
-        <button class="cal-nav" onclick="calNext()">›</button>
+      <!-- 5-day date strip nav -->
+      <div class="dash-date-nav" style="align-items:center;gap:4px">
+        <button class="cal-nav" onclick="shiftDayWindow(-1)" id="day-prev-btn">‹</button>
+        <div id="day-strip" style="display:flex;gap:4px;flex:1;justify-content:center"></div>
+        <button class="cal-nav" onclick="shiftDayWindow(1)" id="day-next-btn">›</button>
       </div>
 
       <!-- Dashboard card -->
@@ -342,17 +339,6 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
       <!-- Meal breakdown -->
       <div class="dash-meals-row" id="sum-meals"></div>
 
-      <!-- Mini calendar -->
-      <div class="card" style="padding:1rem">
-        <div class="cal-wrap">
-          <div class="cal-header">
-            <button class="cal-nav" onclick="calPrev()">‹</button>
-            <span class="cal-title" id="cal-title"></span>
-            <button class="cal-nav" onclick="calNext()">›</button>
-          </div>
-          <div class="cal-grid" id="cal-grid"></div>
-        </div>
-      </div>
 
       <!-- AI advice -->
       <div class="card">
@@ -591,7 +577,7 @@ function switchPage(page, btn) {
   document.getElementById('page-' + page).classList.add('active');
   if (btn) btn.classList.add('active');
   if (page === 'log') loadRecords();
-  if (page === 'summary') { renderCalendar(); renderSummary(selectedDate); }
+  if (page === 'summary') { renderDayStrip(); renderSummary(selectedDate); }
 }
 
 // ---- SCAN ----
@@ -853,58 +839,73 @@ async function delRecord(id) {
   loadRecords();
 }
 
-// ---- CALENDAR ----
-async function loadCalData() {
-  const firstDay = `${calYear}-${String(calMonth+1).padStart(2,'0')}-01`;
-  const lastDay = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${new Date(calYear, calMonth+1, 0).getDate()}`;
-  const { data } = await sb.from('meal_records').select('date, total_kcal')
-    .eq('user_id', currentUser.id).gte('date', firstDay).lte('date', lastDay);
-  calData = {};
-  (data||[]).forEach(r => { calData[r.date] = (calData[r.date]||0) + r.total_kcal; });
+// ---- 5-DAY STRIP ----
+// dayWindowEnd: the last date shown in the 5-day strip (YYYY-MM-DD)
+let dayWindowEnd = new Date().toISOString().slice(0,10);
+
+function dateAddDays(dateStr, n) {
+  const d = new Date(dateStr + 'T12:00:00');
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0,10);
 }
 
-async function renderCalendar() {
-  await loadCalData();
+function getStripDates() {
+  const dates = [];
+  for (let i = 4; i >= 0; i--) dates.push(dateAddDays(dayWindowEnd, -i));
+  return dates;
+}
+
+async function renderDayStrip() {
   const today = new Date().toISOString().slice(0,10);
-  const monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
-  document.getElementById('cal-title').textContent = calYear + '年 ' + monthNames[calMonth];
-  const grid = document.getElementById('cal-grid');
-  const dayLabels = ['日','一','二','三','四','五','六'];
-  let html = dayLabels.map(d => `<div class="cal-day-lbl">${d}</div>`).join('');
-  const firstWeekDay = new Date(calYear, calMonth, 1).getDay();
-  for (let i = 0; i < firstWeekDay; i++) html += `<div class="cal-day empty"></div>`;
-  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const isToday = dateStr === today;
-    const isSelected = dateStr === selectedDate;
-    const hasData = !!calData[dateStr];
-    let cls = 'cal-day';
-    if (isSelected) cls += ' selected';
-    else if (isToday) cls += ' today';
-    if (hasData) cls += ' has-data';
-    const dot = hasData ? `<div class="cal-dot"></div>` : '';
-    html += `<div class="${cls}" onclick="selectCalDay('${dateStr}')">${d}${dot}</div>`;
-  }
-  grid.innerHTML = html;
+  const dates = getStripDates();
+  const strip = document.getElementById('day-strip');
+  // Load kcal data for these 5 days
+  const { data } = await sb.from('meal_records').select('date, total_kcal')
+    .eq('user_id', currentUser.id).gte('date', dates[0]).lte('date', dates[4]);
+  const dayKcal = {};
+  (data||[]).forEach(r => { dayKcal[r.date] = (dayKcal[r.date]||0) + r.total_kcal; });
+
+  const dayNames = ['日','一','二','三','四','五','六'];
+  strip.innerHTML = dates.map(d => {
+    const dateObj = new Date(d + 'T12:00:00');
+    const dayName = dayNames[dateObj.getDay()];
+    const dayNum = dateObj.getDate();
+    const isSelected = d === selectedDate;
+    const isToday = d === today;
+    const hasDot = !!dayKcal[d];
+    return `<button onclick="selectDayStrip('${d}')" style="
+      flex:1;border:1px solid ${isSelected ? 'var(--accent)' : 'var(--border)'};
+      border-radius:10px;padding:6px 2px;background:${isSelected ? 'var(--accent)' : isToday ? 'var(--accent-light)' : 'var(--surface)'};
+      color:${isSelected ? '#fff' : isToday ? 'var(--accent)' : 'var(--text)'};
+      cursor:pointer;font-family:'Noto Sans SC',sans-serif;display:flex;flex-direction:column;align-items:center;gap:2px;
+      font-weight:${isToday || isSelected ? '700' : '400'};transition:all 0.15s">
+      <span style="font-size:10px;color:${isSelected ? 'rgba(255,255,255,0.8)' : 'var(--muted)'}">${dayName}</span>
+      <span style="font-size:14px">${dayNum}</span>
+      <span style="width:5px;height:5px;border-radius:50%;background:${isSelected ? 'rgba(255,255,255,0.7)' : hasDot ? 'var(--accent)' : 'transparent'}"></span>
+    </button>`;
+  }).join('');
+
+  // Hide next button if window end is today or future
+  document.getElementById('day-next-btn').style.opacity = dayWindowEnd >= today ? '0.3' : '1';
+  document.getElementById('day-next-btn').disabled = dayWindowEnd >= today;
 }
 
-async function selectCalDay(date) {
+async function selectDayStrip(date) {
   selectedDate = date;
-  renderCalendar();
+  await renderDayStrip();
   renderSummary(date);
 }
 
-function calPrev() {
-  calMonth--;
-  if (calMonth < 0) { calMonth = 11; calYear--; }
-  renderCalendar();
-}
-
-function calNext() {
-  calMonth++;
-  if (calMonth > 11) { calMonth = 0; calYear++; }
-  renderCalendar();
+async function shiftDayWindow(dir) {
+  const today = new Date().toISOString().slice(0,10);
+  const newEnd = dateAddDays(dayWindowEnd, dir * 5);
+  if (newEnd > today) dayWindowEnd = today;
+  else dayWindowEnd = newEnd;
+  await renderDayStrip();
+  // Auto-select the last date in new window
+  const dates = getStripDates();
+  selectedDate = dir > 0 ? dates[4] : dates[0];
+  renderSummary(selectedDate);
 }
 
 // ---- SUMMARY ----
@@ -912,10 +913,6 @@ async function renderSummary(date) {
   if (!currentUser) return;
   if (!date) date = new Date().toISOString().slice(0,10);
   const today = new Date().toISOString().slice(0,10);
-  const isToday = date === today;
-  const dateObj = new Date(date+'T12:00:00');
-  document.getElementById('sum-date-lbl').textContent = isToday ? '今天' : dateObj.toLocaleDateString('zh-CN',{month:'short',day:'numeric',weekday:'short'});
-  document.getElementById('sum-date-sub').textContent = dateObj.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric'});
 
   const { data } = await sb.from('meal_records').select('*').eq('user_id', currentUser.id).eq('date', date);
   const recs = data || [];
