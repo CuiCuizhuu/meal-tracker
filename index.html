@@ -129,7 +129,7 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
 .manual-food-row input { flex: 1; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 5px 8px; font-size: 12px; background: var(--surface); color: var(--text); font-family: 'Noto Sans SC', sans-serif; outline: none; }
 .manual-food-row input:focus { border-color: var(--accent); }
 .manual-food-row input.kcal-inp { width: 64px; flex: none; }
-.remove-food-btn { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 18px; padding: 0 4px; line-height: 1; }
+.remove-food-btn { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 14px; padding: 0 2px; line-height: 1; flex-shrink: 0; }
 .remove-food-btn:hover { color: var(--danger); }
 /* PROFILE */
 .profile-header { display: flex; align-items: center; gap: 14px; margin-bottom: 1.5rem; }
@@ -865,7 +865,7 @@ async function renderDayStrip() {
   const dayKcal = {};
   (data||[]).forEach(r => { dayKcal[r.date] = (dayKcal[r.date]||0) + r.total_kcal; });
 
-  const dayNames = ['日','一','二','三','四','五','六'];
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   strip.innerHTML = dates.map(d => {
     const dateObj = new Date(d + 'T12:00:00');
     const dayName = dayNames[dateObj.getDay()];
