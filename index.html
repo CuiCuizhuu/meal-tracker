@@ -9,23 +9,15 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 :root {
-  --bg: #F7F5F0;
-  --surface: #FFFFFF;
-  --border: #E5E2DC;
-  --text: #1A1814;
-  --muted: #8A857C;
-  --accent: #2D6A4F;
-  --accent-light: #D8F0E6;
-  --danger: #C0392B;
-  --radius: 12px;
-  --radius-sm: 8px;
+  --bg: #F7F5F0; --surface: #FFFFFF; --border: #E5E2DC;
+  --text: #1A1814; --muted: #8A857C; --accent: #2D6A4F;
+  --accent-light: #D8F0E6; --danger: #C0392B;
+  --radius: 12px; --radius-sm: 8px;
   --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.6; }
 .hidden { display: none !important; }
-
-/* AUTH */
 .auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
 .auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem 2rem; width: 100%; max-width: 400px; box-shadow: var(--shadow); }
 .auth-logo { text-align: center; margin-bottom: 2rem; }
@@ -37,15 +29,18 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
 .tab-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
 .field { margin-bottom: 12px; }
 .field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; font-weight: 500; }
-.field input, .field select { width: 100%; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 14px; background: var(--surface); color: var(--text); font-family: 'Noto Sans SC', sans-serif; outline: none; transition: border-color 0.15s; }
-.field input:focus, .field select:focus { border-color: var(--accent); }
+.field input, .field select, .field textarea { width: 100%; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 14px; background: var(--surface); color: var(--text); font-family: 'Noto Sans SC', sans-serif; outline: none; transition: border-color 0.15s; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
+.field textarea { resize: vertical; min-height: 80px; }
 .btn-main { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); padding: 12px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Noto Sans SC', sans-serif; transition: opacity 0.15s; margin-top: 4px; }
 .btn-main:hover { opacity: 0.88; }
 .btn-main:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-outline { width: 100%; background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; font-size: 13px; cursor: pointer; color: var(--text); font-family: 'Noto Sans SC', sans-serif; transition: all 0.15s; }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.btn-sm { background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 14px; font-size: 12px; cursor: pointer; color: var(--text); font-family: 'Noto Sans SC', sans-serif; }
+.btn-sm:hover { border-color: var(--accent); color: var(--accent); }
 .msg-err { font-size: 12px; color: var(--danger); padding: 6px 0; }
 .msg-ok { font-size: 12px; color: var(--accent); padding: 6px 0; }
-
-/* APP */
 .app-shell { display: flex; flex-direction: column; min-height: 100vh; }
 .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 1.25rem; height: 54px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
 .topbar-logo { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
@@ -63,14 +58,12 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
 .section-label { font-size: 11px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
 .page { display: none; }
 .page.active { display: block; }
-
-/* UPLOAD */
-.upload-zone { border: 1.5px dashed var(--border); border-radius: var(--radius); padding: 2.5rem 1rem; text-align: center; cursor: pointer; transition: all 0.15s; }
+.upload-zone { border: 1.5px dashed var(--border); border-radius: var(--radius); padding: 1.5rem 1rem; text-align: center; cursor: pointer; transition: all 0.15s; }
 .upload-zone:hover { border-color: var(--accent); background: var(--accent-light); }
-.upload-zone .uz-icon { font-size: 2.5rem; margin-bottom: 10px; }
-.upload-zone h3 { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
-.upload-zone p { font-size: 13px; color: var(--muted); }
-.preview-img { width: 100%; max-height: 240px; object-fit: cover; border-radius: var(--radius-sm); margin-bottom: 14px; }
+.upload-zone .uz-icon { font-size: 2rem; margin-bottom: 8px; }
+.upload-zone h3 { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+.upload-zone p { font-size: 12px; color: var(--muted); }
+.preview-img { width: 100%; max-height: 220px; object-fit: cover; border-radius: var(--radius-sm); margin-bottom: 14px; }
 .meal-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
 .meal-chip { border: 1px solid var(--border); border-radius: 20px; padding: 5px 14px; font-size: 12px; cursor: pointer; background: transparent; color: var(--muted); font-family: 'Noto Sans SC', sans-serif; font-weight: 500; transition: all 0.15s; }
 .meal-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
@@ -84,8 +77,6 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
 .stat-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
 .total-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-top: 1px solid var(--border); margin-top: 8px; }
 .total-kcal { font-size: 22px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--accent); }
-
-/* LOG */
 .date-group-header { font-size: 12px; font-weight: 500; color: var(--muted); padding: 10px 0 6px; display: flex; justify-content: space-between; }
 .log-item { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
 .log-item:last-child { border-bottom: none; }
@@ -106,7 +97,6 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
 .month-picker { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
 .month-picker label { font-size: 12px; color: var(--muted); }
 .month-picker input { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 5px 10px; font-size: 13px; background: var(--surface); color: var(--text); outline: none; font-family: 'Noto Sans SC', sans-serif; }
-
 /* SUMMARY */
 .big-kcal { font-size: 3rem; font-weight: 700; font-family: 'DM Mono', monospace; line-height: 1; }
 .big-kcal span { font-size: 1rem; font-weight: 400; color: var(--muted); }
@@ -118,9 +108,29 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
 .meal-summary-row:last-child { border-bottom: none; }
 .ai-box { background: var(--bg); border-radius: var(--radius-sm); padding: 1rem; font-size: 13px; line-height: 1.8; white-space: pre-wrap; color: var(--text); margin-top: 10px; min-height: 60px; }
 .ai-thinking { color: var(--muted); font-style: italic; font-size: 12px; }
-.btn-outline { width: 100%; background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; font-size: 13px; cursor: pointer; color: var(--text); font-family: 'Noto Sans SC', sans-serif; transition: all 0.15s; }
-.btn-outline:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
-
+/* CALENDAR */
+.cal-wrap { margin-bottom: 14px; }
+.cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.cal-title { font-size: 14px; font-weight: 600; }
+.cal-nav { background: none; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 4px 10px; cursor: pointer; font-size: 13px; color: var(--text); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.cal-day-lbl { font-size: 10px; color: var(--muted); text-align: center; padding: 4px 0; font-weight: 500; }
+.cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; font-size: 12px; color: var(--text); transition: all 0.15s; position: relative; gap: 2px; }
+.cal-day:hover { background: var(--accent-light); }
+.cal-day.today { background: var(--accent-light); color: var(--accent); font-weight: 700; }
+.cal-day.selected { background: var(--accent); color: #fff; font-weight: 700; }
+.cal-day.empty { cursor: default; }
+.cal-day.empty:hover { background: transparent; }
+.cal-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+.cal-day.selected .cal-dot { background: rgba(255,255,255,0.7); }
+.cal-day.has-data { font-weight: 500; }
+/* MANUAL INPUT */
+.manual-food-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+.manual-food-row input { flex: 1; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px; font-size: 13px; background: var(--surface); color: var(--text); font-family: 'Noto Sans SC', sans-serif; outline: none; }
+.manual-food-row input:focus { border-color: var(--accent); }
+.manual-food-row input.kcal-inp { width: 80px; flex: none; }
+.remove-food-btn { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 18px; padding: 0 4px; line-height: 1; }
+.remove-food-btn:hover { color: var(--danger); }
 /* PROFILE */
 .profile-header { display: flex; align-items: center; gap: 14px; margin-bottom: 1.5rem; }
 .profile-avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--accent-light); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; flex-shrink: 0; }
@@ -178,8 +188,10 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
   </div>
 
   <div class="main-content">
-    <!-- SCAN -->
+
+    <!-- SCAN PAGE -->
     <div class="page active" id="page-scan">
+      <!-- Entry options -->
       <div class="card" id="upload-card">
         <input type="file" id="file-inp-camera" accept="image/*" capture="environment" style="display:none" onchange="onFile(event)">
         <input type="file" id="file-inp-gallery" accept="image/*" style="display:none" onchange="onFile(event)">
@@ -187,15 +199,22 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
           <div class="upload-zone" onclick="document.getElementById('file-inp-camera').click()">
             <div class="uz-icon">📷</div>
             <h3>拍照识别</h3>
-            <p>打开相机拍摄餐食</p>
+            <p>AI 自动识别食物与热量</p>
           </div>
           <div class="upload-zone" onclick="document.getElementById('file-inp-gallery').click()">
             <div class="uz-icon">🖼️</div>
             <h3>从相册选择</h3>
             <p>选择已有的餐食照片</p>
           </div>
+          <div class="upload-zone" onclick="showManual()">
+            <div class="uz-icon">✏️</div>
+            <h3>手动输入</h3>
+            <p>直接填写食物和热量，节省 Token</p>
+          </div>
         </div>
       </div>
+
+      <!-- Photo analyze card -->
       <div class="card hidden" id="analyze-card">
         <img id="preview" class="preview-img" src="" alt="餐食预览">
         <div class="section-label">这是哪一餐？</div>
@@ -207,10 +226,37 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
         </div>
         <button class="btn-main" id="analyze-btn" onclick="doAnalyze()">✨ AI 识别食物与热量</button>
         <div id="result-area"></div>
+        <button class="btn-outline" style="margin-top:10px" onclick="resetScan()">← 重新选择</button>
+      </div>
+
+      <!-- Manual input card -->
+      <div class="card hidden" id="manual-card">
+        <div class="section-label">手动记录</div>
+        <div class="meal-chips" id="manual-meal-chips">
+          <button class="meal-chip active" onclick="selManualMeal('breakfast',this)">🌅 早餐</button>
+          <button class="meal-chip" onclick="selManualMeal('lunch',this)">☀️ 午餐</button>
+          <button class="meal-chip" onclick="selManualMeal('dinner',this)">🌙 晚餐</button>
+          <button class="meal-chip" onclick="selManualMeal('snack',this)">🍎 零食</button>
+        </div>
+        <div id="manual-foods-list">
+          <div class="manual-food-row">
+            <input placeholder="食物名称（如：米饭）" class="food-name-inp">
+            <input placeholder="kcal" class="kcal-inp" type="number" min="0">
+            <button class="remove-food-btn" onclick="removeManualRow(this)">×</button>
+          </div>
+        </div>
+        <button class="btn-sm" onclick="addManualRow()" style="margin-bottom:12px;width:100%">＋ 添加食物</button>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--border);margin-bottom:12px">
+          <span style="font-size:13px;color:var(--muted)">总热量</span>
+          <span style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent)" id="manual-total">0 kcal</span>
+        </div>
+        <div class="field"><label>备注（营养点评，可选）</label><input id="manual-advice" placeholder="如：蛋白质充足，蔬菜偏少"></div>
+        <button class="btn-main" onclick="saveManual()">💾 保存记录</button>
+        <button class="btn-outline" style="margin-top:8px" onclick="resetScan()">← 取消</button>
       </div>
     </div>
 
-    <!-- LOG -->
+    <!-- LOG PAGE -->
     <div class="page hidden" id="page-log">
       <div class="card">
         <div class="month-picker">
@@ -221,8 +267,22 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
       </div>
     </div>
 
-    <!-- SUMMARY -->
+    <!-- SUMMARY PAGE -->
     <div class="page hidden" id="page-summary">
+      <!-- Calendar -->
+      <div class="card">
+        <div class="cal-wrap">
+          <div class="cal-header">
+            <button class="cal-nav" onclick="calPrev()">‹</button>
+            <span class="cal-title" id="cal-title"></span>
+            <button class="cal-nav" onclick="calNext()">›</button>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:6px">点击日期查看当天摄入</div>
+      </div>
+
+      <!-- Day summary -->
       <div class="card">
         <div class="section-label" id="sum-date-lbl">今日摄入</div>
         <div class="big-kcal" id="sum-kcal">0 <span>kcal</span></div>
@@ -236,18 +296,20 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
           <div class="stat-box"><div class="stat-val" id="sum-f">0g</div><div class="stat-lbl">脂肪</div></div>
         </div>
       </div>
+
       <div class="card">
-        <div class="section-label">今日餐次</div>
-        <div id="sum-meals"><div style="font-size:13px;color:var(--muted);padding:1rem 0;text-align:center">今日暂无记录</div></div>
+        <div class="section-label">餐次明细</div>
+        <div id="sum-meals"><div style="font-size:13px;color:var(--muted);padding:1rem 0;text-align:center">暂无记录</div></div>
       </div>
+
       <div class="card">
         <div class="section-label">AI 健康建议</div>
-        <button class="btn-outline" onclick="getAdvice()">✨ 生成今日专属建议</button>
-        <div class="ai-box" id="advice-out"><span class="ai-thinking">点击上方按钮获取基于今日饮食的个性化建议...</span></div>
+        <button class="btn-outline" onclick="getAdvice()" id="advice-btn">✨ 生成专属建议</button>
+        <div class="ai-box" id="advice-out"><span class="ai-thinking">点击上方按钮获取基于当日饮食的个性化建议...</span></div>
       </div>
     </div>
 
-    <!-- PROFILE -->
+    <!-- PROFILE PAGE -->
     <div class="page hidden" id="page-profile">
       <div class="card">
         <div class="profile-header">
@@ -301,11 +363,11 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
   <nav class="bottom-nav">
     <button class="nav-item active" id="nav-scan" onclick="switchPage('scan',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="7" height="7" rx="1"/><rect x="15" y="2" width="7" height="7" rx="1"/><rect x="2" y="15" width="7" height="7" rx="1"/><circle cx="18" cy="18" r="3"/></svg>
-      拍照
+      记录
     </button>
     <button class="nav-item" id="nav-log" onclick="switchPage('log',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-      记录
+      历史
     </button>
     <button class="nav-item" id="nav-summary" onclick="switchPage('summary',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>
@@ -324,8 +386,11 @@ const SUPA_KEY = 'sb_publishable_p8ZxdNK7dxWZYn5tYXeqlg_wAVyy6v9';
 
 let sb, currentUser, userProfile;
 let selectedMeal = 'breakfast';
+let selectedManualMeal = 'breakfast';
 let pendingResult = null;
 let currentImgB64 = null;
+let calYear, calMonth, selectedDate;
+let calData = {}; // date -> total_kcal
 
 const mealLabel = { breakfast:'早餐', lunch:'午餐', dinner:'晚餐', snack:'零食' };
 const mealBadge = { breakfast:'badge-b', lunch:'badge-l', dinner:'badge-d', snack:'badge-s' };
@@ -377,6 +442,9 @@ async function onLogin() {
   document.getElementById('app-shell').classList.remove('hidden');
   await loadProfile();
   setDefaultMonth();
+  const now = new Date();
+  calYear = now.getFullYear(); calMonth = now.getMonth();
+  selectedDate = now.toISOString().slice(0,10);
 }
 
 async function doLogout() {
@@ -427,10 +495,8 @@ async function saveProfile() {
   };
   const { error } = await sb.from('profiles').upsert(profile);
   const msg = document.getElementById('profile-msg');
-  if (error) {
-    msg.textContent = '保存失败: ' + error.message;
-    msg.style.color = 'var(--danger)';
-  } else {
+  if (error) { msg.textContent = '保存失败: ' + error.message; msg.style.color = 'var(--danger)'; }
+  else {
     userProfile = profile;
     const n = profile.name || currentUser.email;
     document.getElementById('user-name-lbl').textContent = n;
@@ -472,19 +538,31 @@ function switchPage(page, btn) {
   document.getElementById('page-' + page).classList.add('active');
   if (btn) btn.classList.add('active');
   if (page === 'log') loadRecords();
-  if (page === 'summary') renderSummary();
+  if (page === 'summary') { renderCalendar(); renderSummary(selectedDate); }
 }
 
+// ---- SCAN ----
 function selMeal(m, btn) {
   selectedMeal = m;
-  document.querySelectorAll('.meal-chip').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('#analyze-card .meal-chip').forEach(c => c.classList.remove('active'));
   btn.classList.add('active');
+}
+
+function resetScan() {
+  document.getElementById('upload-card').classList.remove('hidden');
+  document.getElementById('analyze-card').classList.add('hidden');
+  document.getElementById('manual-card').classList.add('hidden');
+  document.getElementById('file-inp-camera').value = '';
+  document.getElementById('file-inp-gallery').value = '';
+  currentImgB64 = null; pendingResult = null;
+  document.getElementById('result-area').innerHTML = '';
+  const btn = document.getElementById('analyze-btn');
+  btn.disabled = false; btn.textContent = '✨ AI 识别食物与热量'; btn.onclick = doAnalyze;
 }
 
 function onFile(e) {
   const file = e.target.files[0];
   if (!file) return;
-  // Reset other input so same file can be selected again
   document.getElementById('file-inp-camera').value = '';
   document.getElementById('file-inp-gallery').value = '';
   const reader = new FileReader();
@@ -508,9 +586,7 @@ function onFile(e) {
       document.getElementById('result-area').innerHTML = '';
       pendingResult = null;
       const btn = document.getElementById('analyze-btn');
-      btn.disabled = false;
-      btn.textContent = '✨ AI 识别食物与热量';
-      btn.onclick = doAnalyze;
+      btn.disabled = false; btn.textContent = '✨ AI 识别食物与热量'; btn.onclick = doAnalyze;
     };
     img.src = ev.target.result;
   };
@@ -545,9 +621,7 @@ async function doAnalyze() {
     const result = JSON.parse(raw.replace(/```json|```/g, '').trim());
     pendingResult = result;
     renderResult(result, ra);
-    btn.disabled = false;
-    btn.textContent = '💾 保存到记录';
-    btn.onclick = saveRecord;
+    btn.disabled = false; btn.textContent = '💾 保存到记录'; btn.onclick = saveRecord;
   } catch (err) {
     ra.innerHTML = '<div style="color:var(--danger);font-size:13px;padding:8px 0">识别失败：' + err.message + '</div>';
     btn.disabled = false; btn.textContent = '✨ AI 识别食物与热量'; btn.onclick = doAnalyze;
@@ -588,16 +662,78 @@ async function saveRecord() {
   };
   const { error } = await sb.from('meal_records').insert(record);
   if (error) { alert('保存失败: ' + error.message); return; }
-  document.getElementById('upload-card').classList.remove('hidden');
-  document.getElementById('analyze-card').classList.add('hidden');
-  document.getElementById('file-inp').value = '';
-  currentImgB64 = null; pendingResult = null;
-  document.getElementById('result-area').innerHTML = '';
-  const btn = document.getElementById('analyze-btn');
-  btn.disabled = false; btn.textContent = '✨ AI 识别食物与热量'; btn.onclick = doAnalyze;
+  resetScan();
   alert('✓ 已保存！');
 }
 
+// ---- MANUAL INPUT ----
+function showManual() {
+  document.getElementById('upload-card').classList.add('hidden');
+  document.getElementById('manual-card').classList.remove('hidden');
+  updateManualTotal();
+}
+
+function selManualMeal(m, btn) {
+  selectedManualMeal = m;
+  document.querySelectorAll('#manual-meal-chips .meal-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function addManualRow() {
+  const list = document.getElementById('manual-foods-list');
+  const row = document.createElement('div');
+  row.className = 'manual-food-row';
+  row.innerHTML = `<input placeholder="食物名称" class="food-name-inp"><input placeholder="kcal" class="kcal-inp" type="number" min="0" oninput="updateManualTotal()"><button class="remove-food-btn" onclick="removeManualRow(this)">×</button>`;
+  list.appendChild(row);
+}
+
+function removeManualRow(btn) {
+  const rows = document.querySelectorAll('#manual-foods-list .manual-food-row');
+  if (rows.length <= 1) return;
+  btn.closest('.manual-food-row').remove();
+  updateManualTotal();
+}
+
+function updateManualTotal() {
+  const inputs = document.querySelectorAll('#manual-foods-list .kcal-inp');
+  let total = 0;
+  inputs.forEach(inp => { total += parseInt(inp.value) || 0; });
+  document.getElementById('manual-total').textContent = total + ' kcal';
+}
+
+// Add event listeners for kcal inputs
+document.addEventListener('input', e => {
+  if (e.target.classList.contains('kcal-inp')) updateManualTotal();
+});
+
+async function saveManual() {
+  const rows = document.querySelectorAll('#manual-foods-list .manual-food-row');
+  const foods = [];
+  let total = 0;
+  rows.forEach(row => {
+    const name = row.querySelector('.food-name-inp').value.trim();
+    const kcal = parseInt(row.querySelector('.kcal-inp').value) || 0;
+    if (name) { foods.push({ name, kcal, amount: '', protein: 0, carbs: 0, fat: 0 }); total += kcal; }
+  });
+  if (!foods.length) { alert('请至少填写一项食物'); return; }
+  const today = new Date().toISOString().slice(0, 10);
+  const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+  const record = {
+    user_id: currentUser.id, date: today, meal: selectedManualMeal, time,
+    foods, total_kcal: total, total_protein: 0, total_carbs: 0, total_fat: 0,
+    advice: document.getElementById('manual-advice').value.trim()
+  };
+  const { error } = await sb.from('meal_records').insert(record);
+  if (error) { alert('保存失败: ' + error.message); return; }
+  // Reset manual form
+  document.getElementById('manual-foods-list').innerHTML = `<div class="manual-food-row"><input placeholder="食物名称（如：米饭）" class="food-name-inp"><input placeholder="kcal" class="kcal-inp" type="number" min="0"><button class="remove-food-btn" onclick="removeManualRow(this)">×</button></div>`;
+  document.getElementById('manual-advice').value = '';
+  updateManualTotal();
+  resetScan();
+  alert('✓ 已保存！');
+}
+
+// ---- LOG ----
 function setDefaultMonth() {
   const now = new Date();
   const ym = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
@@ -638,7 +774,7 @@ async function loadRecords() {
           ${r.advice ? `<div style="font-size:11px;color:var(--muted);font-style:italic;margin-top:2px">${r.advice}</div>` : ''}
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-          <span class="log-kcal" onclick="editKcal(${r.id}, ${r.total_kcal}, this)" style="cursor:pointer;text-decoration:underline dotted" title="点击编辑">${r.total_kcal} kcal</span>
+          <span class="log-kcal" onclick="editKcal(${r.id},${r.total_kcal},this)" style="cursor:pointer;text-decoration:underline dotted" title="点击编辑">${r.total_kcal} kcal</span>
           <button class="del-btn" onclick="delRecord(${r.id})">×</button>
         </div>
       </div>`;
@@ -664,11 +800,69 @@ async function delRecord(id) {
   loadRecords();
 }
 
-async function renderSummary() {
-  if (!currentUser) return;
+// ---- CALENDAR ----
+async function loadCalData() {
+  const firstDay = `${calYear}-${String(calMonth+1).padStart(2,'0')}-01`;
+  const lastDay = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${new Date(calYear, calMonth+1, 0).getDate()}`;
+  const { data } = await sb.from('meal_records').select('date, total_kcal')
+    .eq('user_id', currentUser.id).gte('date', firstDay).lte('date', lastDay);
+  calData = {};
+  (data||[]).forEach(r => { calData[r.date] = (calData[r.date]||0) + r.total_kcal; });
+}
+
+async function renderCalendar() {
+  await loadCalData();
   const today = new Date().toISOString().slice(0,10);
-  document.getElementById('sum-date-lbl').textContent = '今日摄入 · ' + new Date().toLocaleDateString('zh-CN', { month:'long', day:'numeric' });
-  const { data } = await sb.from('meal_records').select('*').eq('user_id', currentUser.id).eq('date', today);
+  const monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  document.getElementById('cal-title').textContent = calYear + '年 ' + monthNames[calMonth];
+  const grid = document.getElementById('cal-grid');
+  const dayLabels = ['日','一','二','三','四','五','六'];
+  let html = dayLabels.map(d => `<div class="cal-day-lbl">${d}</div>`).join('');
+  const firstWeekDay = new Date(calYear, calMonth, 1).getDay();
+  for (let i = 0; i < firstWeekDay; i++) html += `<div class="cal-day empty"></div>`;
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = dateStr === today;
+    const isSelected = dateStr === selectedDate;
+    const hasData = !!calData[dateStr];
+    let cls = 'cal-day';
+    if (isSelected) cls += ' selected';
+    else if (isToday) cls += ' today';
+    if (hasData) cls += ' has-data';
+    const dot = hasData ? `<div class="cal-dot"></div>` : '';
+    html += `<div class="${cls}" onclick="selectCalDay('${dateStr}')">${d}${dot}</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+async function selectCalDay(date) {
+  selectedDate = date;
+  renderCalendar();
+  renderSummary(date);
+}
+
+function calPrev() {
+  calMonth--;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCalendar();
+}
+
+function calNext() {
+  calMonth++;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderCalendar();
+}
+
+// ---- SUMMARY ----
+async function renderSummary(date) {
+  if (!currentUser) return;
+  if (!date) date = new Date().toISOString().slice(0,10);
+  const today = new Date().toISOString().slice(0,10);
+  const lbl = date === today ? '今天 · ' + new Date().toLocaleDateString('zh-CN', { month:'long', day:'numeric' })
+    : new Date(date+'T12:00:00').toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric', weekday:'short' });
+  document.getElementById('sum-date-lbl').textContent = lbl;
+  const { data } = await sb.from('meal_records').select('*').eq('user_id', currentUser.id).eq('date', date);
   const recs = data || [];
   const tot = recs.reduce((s,r) => s+r.total_kcal, 0);
   const tp = recs.reduce((s,r) => s+r.total_protein, 0);
@@ -692,27 +886,28 @@ async function renderSummary() {
       <span class="badge ${mealBadge[k]}">${mealLabel[k]}</span>
       <span style="font-size:14px;font-weight:700;font-family:'DM Mono',monospace">${v} kcal</span>
     </div>`).join('');
-  document.getElementById('sum-meals').innerHTML = mealHtml || '<div style="font-size:13px;color:var(--muted);padding:1rem 0;text-align:center">今日暂无记录</div>';
+  document.getElementById('sum-meals').innerHTML = mealHtml || '<div style="font-size:13px;color:var(--muted);padding:1rem 0;text-align:center">当日暂无记录</div>';
+  document.getElementById('advice-out').innerHTML = '<span class="ai-thinking">点击上方按钮获取基于当日饮食的个性化建议...</span>';
 }
 
 async function getAdvice() {
-  const today = new Date().toISOString().slice(0,10);
-  const { data } = await sb.from('meal_records').select('*').eq('user_id', currentUser.id).eq('date', today);
+  const { data } = await sb.from('meal_records').select('*').eq('user_id', currentUser.id).eq('date', selectedDate);
   const recs = data || [];
   const out = document.getElementById('advice-out');
   out.innerHTML = '<span class="ai-thinking">AI 分析中，请稍候...</span>';
   const allFoods = recs.flatMap(r => (r.foods||[]).map(f => f.name + '(' + mealLabel[r.meal] + ')'));
   const tot = recs.reduce((s,r) => s+r.total_kcal, 0);
   const target = (userProfile && userProfile.tdee) || 2000;
+  const dateLabel = new Date(selectedDate+'T12:00:00').toLocaleDateString('zh-CN', { month:'long', day:'numeric' });
   const profileDesc = userProfile ? `用户：${userProfile.name||''}，${userProfile.gender||''}，${userProfile.age||'?'}岁，目标：${userProfile.goal||'维持'}，偏好：${userProfile.prefer||'无特殊'}，每日目标：${target} kcal。` : `每日目标：${target} kcal。`;
-  const mealDesc = `今日摄入 ${tot} kcal（${Math.round(tot/target*100)}%），食物：${allFoods.join('、') || '暂无记录'}`;
+  const mealDesc = `${dateLabel}摄入 ${tot} kcal（${Math.round(tot/target*100)}%），食物：${allFoods.join('、') || '暂无记录'}`;
   try {
     const resp = await fetch('/api/chat', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-opus-4-5', max_tokens: 800,
-        system: '你是专业营养师。根据用户今日饮食给出简洁实用的中文健康建议，包括：热量评估、营养分析、优缺点、明日建议。200字内，语气温和鼓励。',
-        messages: [{ role: 'user', content: profileDesc + '\n' + mealDesc + '\n请给出今日健康建议。' }]
+        system: '你是专业营养师。根据用户当日饮食给出简洁实用的中文健康建议，包括：热量评估、营养分析、优缺点、明日建议。200字内，语气温和鼓励。',
+        messages: [{ role: 'user', content: profileDesc + '\n' + mealDesc + '\n请给出健康建议。' }]
       })
     });
     const d = await resp.json();
