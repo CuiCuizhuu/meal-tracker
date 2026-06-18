@@ -166,6 +166,28 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
 .dash-meal-kcal { font-size:17px; font-weight:700; font-family:'DM Mono',monospace; color:var(--text); }
 .dash-meal-bar-bg { height:3px; background:var(--bg); border-radius:2px; overflow:hidden; margin-top:6px; }
 .dash-meal-bar { height:3px; border-radius:2px; transition:width 0.5s; }
+
+/* AVATAR PICKER */
+.avatar-picker-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:500; display:flex; align-items:center; justify-content:center; padding:1rem; }
+.avatar-picker-sheet { background:var(--surface); border-radius:20px; padding:1.5rem; width:100%; max-width:360px; box-shadow:0 8px 40px rgba(0,0,0,0.18); }
+.avatar-picker-sheet h3 { font-size:15px; font-weight:600; margin-bottom:1rem; text-align:center; }
+.avatar-picker-tabs { display:flex; background:var(--bg); border-radius:8px; padding:3px; margin-bottom:1rem; }
+.avatar-picker-tab { flex:1; border:none; background:transparent; padding:7px; border-radius:6px; font-size:13px; cursor:pointer; color:var(--muted); font-family:'Noto Sans SC',sans-serif; font-weight:500; transition:all .15s; }
+.avatar-picker-tab.active { background:var(--surface); color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+.preset-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:1rem; }
+.preset-item { cursor:pointer; border-radius:50%; border:2.5px solid transparent; transition:all .15s; overflow:hidden; }
+.preset-item:hover { border-color:var(--accent); transform:scale(1.06); }
+.preset-item.selected { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-light); }
+.upload-avatar-zone { border:1.5px dashed var(--border); border-radius:var(--radius); padding:1.5rem 1rem; text-align:center; cursor:pointer; transition:all .15s; margin-bottom:1rem; }
+.upload-avatar-zone:hover { border-color:var(--accent); background:var(--accent-light); }
+.avatar-preview-wrap { display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:1rem; }
+.avatar-preview-wrap img { width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--border); }
+.avatar-picker-actions { display:flex; gap:8px; }
+.avatar-picker-actions button { flex:1; }
+.avatar { cursor:pointer; transition:opacity .15s; }
+.avatar:hover { opacity:.8; }
+.profile-avatar { cursor:pointer; transition:opacity .15s; }
+.profile-avatar:hover { opacity:.8; }
 </style>
 </head>
 <body>
@@ -204,25 +226,7 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
   <div class="topbar">
     <div class="topbar-logo">吃<span>什么</span></div>
     <div class="topbar-right">
-      <div class="avatar" id="user-avatar">
-        <svg viewBox="0 0 120 120" width="30" height="30" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="60" cy="60" r="60" fill="#E8EEF7"/>
-          <clipPath id="clip-user"><circle cx="60" cy="60" r="60"/></clipPath>
-          <g clip-path="url(#clip-user)">
-            <rect x="8" y="88" width="104" height="50" rx="10" fill="#3B5BDB"/>
-            <rect x="48" y="74" width="24" height="20" fill="#C9A87C"/>
-            <ellipse cx="60" cy="62" rx="30" ry="32" fill="#D4A574"/>
-            <rect x="30" y="30" width="60" height="24" rx="12" fill="#2C2825"/>
-            <ellipse cx="30" cy="62" rx="6" ry="8" fill="#C49460"/>
-            <ellipse cx="90" cy="62" rx="6" ry="8" fill="#C49460"/>
-            <ellipse cx="48" cy="60" rx="5" ry="6" fill="#1A1A2E"/>
-            <ellipse cx="72" cy="60" rx="5" ry="6" fill="#1A1A2E"/>
-            <circle cx="50" cy="58" r="2" fill="white"/>
-            <circle cx="74" cy="58" r="2" fill="white"/>
-            <path d="M52 76 Q60 83 68 76" fill="none" stroke="#8B4513" stroke-width="2.2" stroke-linecap="round"/>
-          </g>
-        </svg>
-      </div>
+      <div class="avatar" id="user-avatar" onclick="openAvatarPicker()" title="点击更换头像"></div>
       <span id="user-name-lbl" style="font-size:13px;font-weight:500"></span>
       <button class="logout-btn" onclick="doLogout()">退出</button>
     </div>
@@ -370,25 +374,7 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
     <div class="page hidden" id="page-profile">
       <div class="card">
         <div class="profile-header">
-          <div class="profile-avatar" id="profile-avatar-big">
-            <svg viewBox="0 0 120 120" width="56" height="56" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="60" cy="60" r="60" fill="#E8EEF7"/>
-              <clipPath id="clip-profile"><circle cx="60" cy="60" r="60"/></clipPath>
-              <g clip-path="url(#clip-profile)">
-                <rect x="8" y="88" width="104" height="50" rx="10" fill="#3B5BDB"/>
-                <rect x="48" y="74" width="24" height="20" fill="#C9A87C"/>
-                <ellipse cx="60" cy="62" rx="30" ry="32" fill="#D4A574"/>
-                <rect x="30" y="30" width="60" height="24" rx="12" fill="#2C2825"/>
-                <ellipse cx="30" cy="62" rx="6" ry="8" fill="#C49460"/>
-                <ellipse cx="90" cy="62" rx="6" ry="8" fill="#C49460"/>
-                <ellipse cx="48" cy="60" rx="5" ry="6" fill="#1A1A2E"/>
-                <ellipse cx="72" cy="60" rx="5" ry="6" fill="#1A1A2E"/>
-                <circle cx="50" cy="58" r="2" fill="white"/>
-                <circle cx="74" cy="58" r="2" fill="white"/>
-                <path d="M52 76 Q60 83 68 76" fill="none" stroke="#8B4513" stroke-width="2.2" stroke-linecap="round"/>
-              </g>
-            </svg>
-          </div>
+          <div class="profile-avatar" id="profile-avatar-big" onclick="openAvatarPicker()" title="点击更换头像"></div>
           <div>
             <div style="font-size:16px;font-weight:700" id="profile-name-disp">请完善档案</div>
             <div style="font-size:12px;color:var(--muted);margin-top:3px" id="profile-goal-disp">—</div>
@@ -453,6 +439,39 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
       档案
     </button>
   </nav>
+</div>
+
+
+<!-- AVATAR PICKER MODAL -->
+<div id="avatar-picker-overlay" class="avatar-picker-overlay hidden">
+  <div class="avatar-picker-sheet">
+    <h3>更换头像</h3>
+    <div class="avatar-picker-tabs">
+      <button class="avatar-picker-tab active" id="apt-preset" onclick="switchAvatarTab('preset')">预设头像</button>
+      <button class="avatar-picker-tab" id="apt-upload" onclick="switchAvatarTab('upload')">上传照片</button>
+    </div>
+    <!-- Preset tab -->
+    <div id="avatar-tab-preset">
+      <div class="preset-grid" id="preset-grid"></div>
+    </div>
+    <!-- Upload tab -->
+    <div id="avatar-tab-upload" class="hidden">
+      <input type="file" id="avatar-file-inp" accept="image/*" style="display:none" onchange="onAvatarFile(event)">
+      <div class="upload-avatar-zone" onclick="document.getElementById('avatar-file-inp').click()">
+        <div style="font-size:2rem;margin-bottom:6px">📷</div>
+        <div style="font-size:14px;font-weight:500;margin-bottom:3px">选择照片</div>
+        <div style="font-size:12px;color:var(--muted)">支持 JPG、PNG 格式</div>
+      </div>
+      <div class="avatar-preview-wrap hidden" id="avatar-upload-preview">
+        <img id="avatar-upload-img" src="" alt="预览">
+        <span style="font-size:12px;color:var(--muted)">预览效果</span>
+      </div>
+    </div>
+    <div class="avatar-picker-actions">
+      <button class="btn-outline" onclick="closeAvatarPicker()">取消</button>
+      <button class="btn-main" onclick="confirmAvatar()">确认</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -535,6 +554,7 @@ async function loadProfile() {
     userProfile = data;
     const n = data.name || currentUser.email;
     document.getElementById('user-name-lbl').textContent = n;
+    renderAvatarElements();
     document.getElementById('profile-name-disp').textContent = data.name || n;
     document.getElementById('profile-goal-disp').textContent = (data.goal || '维持体重') + ' · ' + (data.prefer || '无特殊');
     ['name','gender','age','height','weight','activity','goal','prefer','notes'].forEach(k => {
@@ -573,6 +593,7 @@ async function saveProfile() {
     userProfile = profile;
     const n = profile.name || currentUser.email;
     document.getElementById('user-name-lbl').textContent = n;
+    renderAvatarElements();
     document.getElementById('profile-name-disp').textContent = profile.name || n;
     document.getElementById('profile-goal-disp').textContent = profile.goal + ' · ' + profile.prefer;
     msg.textContent = '✓ 保存成功！每日热量目标：' + tdee + ' kcal';
@@ -1018,6 +1039,132 @@ async function getAdvice() {
     out.textContent = d.content?.map(i => i.text||'').join('') || '获取失败，请重试';
   } catch(e) { out.textContent = '获取失败，请检查网络后重试'; }
 }
+
+// ---- AVATAR SYSTEM ----
+const PRESET_AVATARS = [
+  // Engineer
+  `<svg viewBox="0 0 120 120" width="SIZE" height="SIZE" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="60" fill="#E8EEF7"/><clipPath id="pa0"><circle cx="60" cy="60" r="60"/></clipPath><g clip-path="url(#pa0)"><rect x="8" y="88" width="104" height="50" rx="10" fill="#3B5BDB"/><rect x="48" y="74" width="24" height="20" fill="#C9A87C"/><ellipse cx="60" cy="62" rx="30" ry="32" fill="#D4A574"/><rect x="30" y="30" width="60" height="24" rx="12" fill="#2C2825"/><ellipse cx="30" cy="62" rx="6" ry="8" fill="#C49460"/><ellipse cx="90" cy="62" rx="6" ry="8" fill="#C49460"/><ellipse cx="48" cy="60" rx="5" ry="6" fill="#1A1A2E"/><ellipse cx="72" cy="60" rx="5" ry="6" fill="#1A1A2E"/><circle cx="50" cy="58" r="2" fill="white"/><circle cx="74" cy="58" r="2" fill="white"/><path d="M52 76 Q60 83 68 76" fill="none" stroke="#8B4513" stroke-width="2.2" stroke-linecap="round"/></g></svg>`,
+  // Designer
+  `<svg viewBox="0 0 120 120" width="SIZE" height="SIZE" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="60" fill="#EEF0F9"/><clipPath id="pa1"><circle cx="60" cy="60" r="60"/></clipPath><g clip-path="url(#pa1)"><rect x="6" y="86" width="108" height="50" rx="10" fill="#6C63FF" opacity="0.85"/><rect x="47" y="73" width="26" height="19" fill="#E8C4A0"/><ellipse cx="60" cy="60" rx="31" ry="32" fill="#F2D9BB"/><rect x="29" y="28" width="62" height="22" rx="11" fill="#3D2B1F"/><rect x="29" y="42" width="10" height="44" rx="5" fill="#3D2B1F"/><rect x="81" y="42" width="10" height="44" rx="5" fill="#3D2B1F"/><ellipse cx="29" cy="61" rx="6" ry="8" fill="#DDB98A"/><ellipse cx="91" cy="61" rx="6" ry="8" fill="#DDB98A"/><ellipse cx="48" cy="59" rx="6" ry="6.5" fill="#1A1A2E"/><ellipse cx="72" cy="59" rx="6" ry="6.5" fill="#1A1A2E"/><circle cx="50" cy="57" r="2" fill="white"/><circle cx="74" cy="57" r="2" fill="white"/><path d="M52 74 Q60 81 68 74" fill="none" stroke="#A0522D" stroke-width="2.2" stroke-linecap="round"/></g></svg>`,
+  // PM
+  `<svg viewBox="0 0 120 120" width="SIZE" height="SIZE" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="60" fill="#F0EFED"/><clipPath id="pa2"><circle cx="60" cy="60" r="60"/></clipPath><g clip-path="url(#pa2)"><rect x="6" y="86" width="108" height="50" rx="10" fill="#374151"/><polygon points="48,86 60,98 52,86" fill="white"/><polygon points="72,86 60,98 68,86" fill="white"/><polygon points="60,86 56,100 64,100" fill="#3B5BDB"/><rect x="47" y="74" width="26" height="18" fill="#C9A080"/><ellipse cx="60" cy="61" rx="30" ry="31" fill="#D4A574"/><path d="M30 46 Q32 28 60 27 Q88 28 90 46 L90 54 Q60 42 30 54Z" fill="#4A3728"/><ellipse cx="30" cy="61" rx="6" ry="8" fill="#C49060"/><ellipse cx="90" cy="61" rx="6" ry="8" fill="#C49060"/><ellipse cx="48" cy="59" rx="5" ry="5.5" fill="#1A1A2E"/><ellipse cx="72" cy="59" rx="5" ry="5.5" fill="#1A1A2E"/><circle cx="50" cy="57" r="1.8" fill="white"/><circle cx="74" cy="57" r="1.8" fill="white"/><path d="M51 75 Q60 83 69 75" fill="none" stroke="#8B4513" stroke-width="2.2" stroke-linecap="round"/></g></svg>`,
+  // Data (glasses)
+  `<svg viewBox="0 0 120 120" width="SIZE" height="SIZE" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="60" fill="#E8F4F1"/><clipPath id="pa3"><circle cx="60" cy="60" r="60"/></clipPath><g clip-path="url(#pa3)"><rect x="8" y="87" width="104" height="50" rx="10" fill="#0F766E"/><rect x="47" y="75" width="26" height="18" fill="#FBBF9A"/><ellipse cx="60" cy="62" rx="31" ry="32" fill="#FCCBA8"/><ellipse cx="60" cy="34" rx="34" ry="18" fill="#1C1008"/><circle cx="32" cy="40" r="13" fill="#1C1008"/><circle cx="88" cy="40" r="13" fill="#1C1008"/><ellipse cx="29" cy="62" rx="6" ry="8" fill="#EAB080"/><ellipse cx="91" cy="62" rx="6" ry="8" fill="#EAB080"/><rect x="33" y="52" width="22" height="16" rx="6" fill="none" stroke="#374151" stroke-width="2.2"/><rect x="65" y="52" width="22" height="16" rx="6" fill="none" stroke="#374151" stroke-width="2.2"/><line x1="55" y1="60" x2="65" y2="60" stroke="#374151" stroke-width="2.2"/><ellipse cx="44" cy="60" rx="4" ry="4.5" fill="#1A1A2E"/><ellipse cx="76" cy="60" rx="4" ry="4.5" fill="#1A1A2E"/><circle cx="46" cy="58" r="1.5" fill="white"/><circle cx="78" cy="58" r="1.5" fill="white"/><path d="M52 76 Q60 83 68 76" fill="none" stroke="#A05020" stroke-width="2" stroke-linecap="round"/></g></svg>`,
+  // Growth
+  `<svg viewBox="0 0 120 120" width="SIZE" height="SIZE" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="60" fill="#F5F0E8"/><clipPath id="pa4"><circle cx="60" cy="60" r="60"/></clipPath><g clip-path="url(#pa4)"><rect x="6" y="85" width="108" height="50" rx="12" fill="#6366F1"/><rect x="36" y="97" width="48" height="18" rx="7" fill="#4F46E5"/><rect x="47" y="75" width="26" height="18" fill="#E8C49A"/><ellipse cx="60" cy="62" rx="31" ry="32" fill="#F0C98C"/><path d="M29 44 Q30 24 60 22 Q88 22 91 38 L91 50 Q74 34 48 38 Q36 40 32 52Z" fill="#C87533"/><ellipse cx="29" cy="62" rx="6" ry="8" fill="#D4A870"/><ellipse cx="91" cy="62" rx="6" ry="8" fill="#D4A870"/><ellipse cx="48" cy="60" rx="6" ry="6.5" fill="#1A1A2E"/><ellipse cx="72" cy="60" rx="6" ry="6.5" fill="#1A1A2E"/><circle cx="50" cy="57.5" r="2.2" fill="white"/><circle cx="74" cy="57.5" r="2.2" fill="white"/><path d="M50 76 Q60 85 70 76" fill="none" stroke="#8B3A00" stroke-width="2.2" stroke-linecap="round"/></g></svg>`,
+  // Support (headset)
+  `<svg viewBox="0 0 120 120" width="SIZE" height="SIZE" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="60" fill="#EDF4EC"/><clipPath id="pa5"><circle cx="60" cy="60" r="60"/></clipPath><g clip-path="url(#pa5)"><rect x="8" y="86" width="104" height="50" rx="10" fill="#16A34A"/><rect x="47" y="75" width="26" height="18" fill="#C9A080"/><ellipse cx="60" cy="62" rx="30" ry="31" fill="#D4A574"/><path d="M30 55 Q30 24 60 24 Q90 24 90 55" fill="none" stroke="#374151" stroke-width="5" stroke-linecap="round"/><ellipse cx="30" cy="57" rx="8" ry="11" fill="#374151"/><ellipse cx="90" cy="57" rx="8" ry="11" fill="#374151"/><line x1="90" y1="68" x2="97" y2="76" stroke="#374151" stroke-width="3" stroke-linecap="round"/><ellipse cx="99" cy="78" rx="5" ry="4" fill="#374151"/><rect x="32" y="34" width="56" height="18" rx="9" fill="#5A3E2B"/><ellipse cx="48" cy="61" rx="5" ry="5.5" fill="#1A1A2E"/><ellipse cx="72" cy="61" rx="5" ry="5.5" fill="#1A1A2E"/><circle cx="50" cy="59" r="1.8" fill="white"/><circle cx="74" cy="59" r="1.8" fill="white"/><path d="M52 75 Q60 82 68 75" fill="none" stroke="#8B4513" stroke-width="2" stroke-linecap="round"/></g></svg>`,
+  // Finance (suit)
+  `<svg viewBox="0 0 120 120" width="SIZE" height="SIZE" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="60" fill="#EEF0F4"/><clipPath id="pa6"><circle cx="60" cy="60" r="60"/></clipPath><g clip-path="url(#pa6)"><rect x="6" y="86" width="108" height="50" rx="10" fill="#1E3A5F"/><polygon points="48,86 60,98 52,86" fill="white"/><polygon points="72,86 60,98 68,86" fill="white"/><rect x="47" y="74" width="26" height="18" fill="#E8C9A8"/><ellipse cx="60" cy="61" rx="30" ry="32" fill="#EDCFAA"/><path d="M30 44 Q31 26 60 25 Q89 26 90 44 L90 54 Q71 42 49 42 Q36 42 30 54Z" fill="#2C2420"/><ellipse cx="30" cy="62" rx="6" ry="8" fill="#DEBA8A"/><ellipse cx="90" cy="62" rx="6" ry="8" fill="#DEBA8A"/><rect x="35" y="53" width="20" height="14" rx="5" fill="none" stroke="#8B7355" stroke-width="1.8"/><rect x="65" y="53" width="20" height="14" rx="5" fill="none" stroke="#8B7355" stroke-width="1.8"/><line x1="55" y1="60" x2="65" y2="60" stroke="#8B7355" stroke-width="1.8"/><ellipse cx="45" cy="60" rx="3.5" ry="4" fill="#1A1A2E"/><ellipse cx="75" cy="60" rx="3.5" ry="4" fill="#1A1A2E"/><circle cx="46.5" cy="58.5" r="1.3" fill="white"/><circle cx="76.5" cy="58.5" r="1.3" fill="white"/><path d="M51 75 Q60 82 69 75" fill="none" stroke="#8B4513" stroke-width="2" stroke-linecap="round"/></g></svg>`,
+  // Marketing (wavy hair)
+  `<svg viewBox="0 0 120 120" width="SIZE" height="SIZE" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="60" fill="#F5EEEE"/><clipPath id="pa7"><circle cx="60" cy="60" r="60"/></clipPath><g clip-path="url(#pa7)"><rect x="6" y="85" width="108" height="50" rx="10" fill="#BE185D"/><path d="M36 85 Q60 100 84 85" fill="none" stroke="#F9A8D4" stroke-width="5" stroke-linecap="round"/><rect x="47" y="74" width="26" height="17" fill="#F0D5B8"/><ellipse cx="60" cy="62" rx="30" ry="31" fill="#F5D9B5"/><path d="M30 44 Q28 24 60 22 Q92 24 90 44 L92 62 Q82 48 78 66 Q68 44 60 50 Q52 44 42 66 Q38 48 28 62Z" fill="#6B3A2A"/><ellipse cx="30" cy="62" rx="6" ry="8" fill="#DDB88A"/><ellipse cx="90" cy="62" rx="6" ry="8" fill="#DDB88A"/><circle cx="30" cy="72" r="3.5" fill="#F59E0B"/><circle cx="90" cy="72" r="3.5" fill="#F59E0B"/><ellipse cx="48" cy="60" rx="5.5" ry="6" fill="#1A1A2E"/><ellipse cx="72" cy="60" rx="5.5" ry="6" fill="#1A1A2E"/><circle cx="50" cy="58" r="2" fill="white"/><circle cx="74" cy="58" r="2" fill="white"/><path d="M51 75 Q60 83 69 75" fill="none" stroke="#A0402A" stroke-width="2.2" stroke-linecap="round"/></g></svg>`,
+  // DevOps (beard)
+  `<svg viewBox="0 0 120 120" width="SIZE" height="SIZE" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="60" fill="#EDEEF5"/><clipPath id="pa8"><circle cx="60" cy="60" r="60"/></clipPath><g clip-path="url(#pa8)"><rect x="6" y="86" width="108" height="50" rx="10" fill="#312E81"/><rect x="47" y="74" width="26" height="18" fill="#C49870"/><ellipse cx="60" cy="62" rx="31" ry="32" fill="#D4A070"/><ellipse cx="60" cy="40" rx="32" ry="18" fill="#1C1008"/><ellipse cx="29" cy="62" rx="6" ry="8" fill="#C08060"/><ellipse cx="91" cy="62" rx="6" ry="8" fill="#C08060"/><path d="M32 72 Q60 92 88 72 Q84 86 60 90 Q36 86 32 72Z" fill="#2C1A08"/><ellipse cx="48" cy="59" rx="5.5" ry="6" fill="#1A1A2E"/><ellipse cx="72" cy="59" rx="5.5" ry="6" fill="#1A1A2E"/><circle cx="50" cy="57" r="2" fill="white"/><circle cx="74" cy="57" r="2" fill="white"/><line x1="41" y1="50" x2="56" y2="50" stroke="#1C1008" stroke-width="2.5" stroke-linecap="round"/><line x1="64" y1="50" x2="79" y2="50" stroke="#1C1008" stroke-width="2.5" stroke-linecap="round"/><path d="M51 73 Q60 80 69 73" fill="none" stroke="#7A3A10" stroke-width="2.2" stroke-linecap="round"/></g></svg>`,
+  // Legal (bun)
+  `<svg viewBox="0 0 120 120" width="SIZE" height="SIZE" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="60" fill="#F2F2F0"/><clipPath id="pa9"><circle cx="60" cy="60" r="60"/></clipPath><g clip-path="url(#pa9)"><rect x="6" y="86" width="108" height="50" rx="10" fill="#292524"/><polygon points="48,86 60,96 52,86" fill="white"/><polygon points="72,86 60,96 68,86" fill="white"/><rect x="47" y="74" width="26" height="18" fill="#E8C5A0"/><ellipse cx="60" cy="62" rx="30" ry="31" fill="#ECCC9E"/><path d="M30 46 Q30 24 60 23 Q90 24 90 46 L92 66 Q82 52 60 52 Q38 52 28 66Z" fill="#4A3020"/><ellipse cx="60" cy="24" rx="16" ry="9" fill="#4A3020"/><ellipse cx="30" cy="62" rx="6" ry="8" fill="#DCBA80"/><ellipse cx="90" cy="62" rx="6" ry="8" fill="#DCBA80"/><circle cx="30" cy="72" r="4" fill="#F8F4EE"/><circle cx="90" cy="72" r="4" fill="#F8F4EE"/><ellipse cx="48" cy="60" rx="5.5" ry="6" fill="#1A1A2E"/><ellipse cx="72" cy="60" rx="5.5" ry="6" fill="#1A1A2E"/><circle cx="50" cy="58" r="2" fill="white"/><circle cx="74" cy="58" r="2" fill="white"/><path d="M51 75 Q60 82 69 75" fill="none" stroke="#8B4513" stroke-width="2.2" stroke-linecap="round"/></g></svg>`
+];
+
+let currentAvatarTab = 'preset';
+let selectedPresetIndex = 0;
+let uploadedAvatarDataUrl = null;
+let pendingAvatarDataUrl = null; // what will be saved on confirm
+
+function renderAvatarElements() {
+  const saved = localStorage.getItem('userAvatarDataUrl');
+  const savedPreset = parseInt(localStorage.getItem('userAvatarPreset') ?? '0');
+  selectedPresetIndex = savedPreset;
+
+  let svgSmall, svgBig;
+  if (saved) {
+    svgSmall = `<img src="${saved}" style="width:30px;height:30px;border-radius:50%;object-fit:cover">`;
+    svgBig   = `<img src="${saved}" style="width:56px;height:56px;border-radius:50%;object-fit:cover">`;
+  } else {
+    svgSmall = PRESET_AVATARS[savedPreset].replace(/SIZE/g, '30');
+    svgBig   = PRESET_AVATARS[savedPreset].replace(/SIZE/g, '56');
+  }
+  document.getElementById('user-avatar').innerHTML = svgSmall;
+  document.getElementById('profile-avatar-big').innerHTML = svgBig;
+}
+
+function openAvatarPicker() {
+  uploadedAvatarDataUrl = null;
+  pendingAvatarDataUrl = null;
+  document.getElementById('avatar-upload-preview').classList.add('hidden');
+  document.getElementById('avatar-file-inp').value = '';
+  switchAvatarTab('preset');
+  renderPresetGrid();
+  document.getElementById('avatar-picker-overlay').classList.remove('hidden');
+}
+
+function closeAvatarPicker() {
+  document.getElementById('avatar-picker-overlay').classList.add('hidden');
+}
+
+function switchAvatarTab(tab) {
+  currentAvatarTab = tab;
+  document.getElementById('apt-preset').classList.toggle('active', tab === 'preset');
+  document.getElementById('apt-upload').classList.toggle('active', tab === 'upload');
+  document.getElementById('avatar-tab-preset').classList.toggle('hidden', tab !== 'preset');
+  document.getElementById('avatar-tab-upload').classList.toggle('hidden', tab !== 'upload');
+}
+
+function renderPresetGrid() {
+  const grid = document.getElementById('preset-grid');
+  grid.innerHTML = PRESET_AVATARS.map((svg, i) => `
+    <div class="preset-item ${i === selectedPresetIndex ? 'selected' : ''}" onclick="selectPreset(${i})">
+      ${svg.replace(/SIZE/g, '48')}
+    </div>
+  `).join('');
+}
+
+function selectPreset(i) {
+  selectedPresetIndex = i;
+  uploadedAvatarDataUrl = null;
+  renderPresetGrid();
+}
+
+function onAvatarFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const size = 200;
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      // crop center square
+      const min = Math.min(img.width, img.height);
+      const sx = (img.width - min) / 2;
+      const sy = (img.height - min) / 2;
+      ctx.drawImage(img, sx, sy, min, min, 0, 0, size, size);
+      uploadedAvatarDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      document.getElementById('avatar-upload-img').src = uploadedAvatarDataUrl;
+      document.getElementById('avatar-upload-preview').classList.remove('hidden');
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function confirmAvatar() {
+  if (currentAvatarTab === 'upload' && uploadedAvatarDataUrl) {
+    localStorage.setItem('userAvatarDataUrl', uploadedAvatarDataUrl);
+    localStorage.removeItem('userAvatarPreset');
+  } else {
+    localStorage.removeItem('userAvatarDataUrl');
+    localStorage.setItem('userAvatarPreset', selectedPresetIndex);
+  }
+  renderAvatarElements();
+  closeAvatarPicker();
+}
+
+// Close on overlay click
+document.getElementById('avatar-picker-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeAvatarPicker();
+});
+
 
 init();
 </script>
